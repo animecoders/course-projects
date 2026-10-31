@@ -9,6 +9,10 @@ const client = new MongoClient(
 async function start() {
   await client.connect();
 
+  app.get("/", async (req, res) => {
+    res.json({ status: 'ok' })
+  })
+
   app.get('/time', async (req, res) => {
     try {
       await client.db('admin').command({ ping: 1 });

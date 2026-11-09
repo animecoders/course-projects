@@ -7,9 +7,14 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println(".env not found; using environment defaults")
+	}
+
 	publicDir := "public"
 	if _, err := os.Stat(filepath.Join(publicDir, "home.html")); err != nil {
 		log.Fatalf("find public/home.html: %v", err)
@@ -22,7 +27,11 @@ func main() {
 		c.File(filepath.Join(publicDir, "home.html"))
 	})
 
-	if err := router.Run(":3000"); err != nil && err != http.ErrServerClosed {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	if err := router.Run(":" + port); err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
 }
